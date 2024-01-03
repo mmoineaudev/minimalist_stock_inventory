@@ -1,5 +1,3 @@
-export CSV_SEPARATOR=';'
-export UNITS=( 'U' 'l' 'g' )
 
 add_entry() {
     debug "add_entry $*"

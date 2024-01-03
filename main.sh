@@ -16,6 +16,7 @@ IMPORTS=(
     IHM.sh 
     style.sh 
     utility.sh
+    ../configuration.conf
 ) # l'ordre d'import n'importe pas, une fois les fichiers sourcés chacunes des fonctions appelées depuis $0 peut utiliser chacune des dépendances, 
 # attention à la surcharge de noms de variables !
 
@@ -43,15 +44,5 @@ print_avalaible_functions() {
 ######################################
 
 title
-
-print_avalaible_functions
-
-print "Entrez une fonction et éventuellement ses arguments :"
-read -p "> " FUNCTION
-
-echo "$FUNCTION"
-
-${FUNCTION}
-
-
+main_menu
 exit_ok

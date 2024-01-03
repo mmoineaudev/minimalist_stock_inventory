@@ -1,15 +1,6 @@
 #!/bin/bash
 
-DEBUG=1 # debug flag
 
-export RAZ_STYLE="\e[0m"
-export BLUE_STYLE="\e[0;49;96m"
-export PURPLE_STYLE="\e[1;40;35m"
-export RED_STYLE="\e[91m"
-export GREEN_STYLE="\e[38;5;82m"
-export UDERLINE_STYLE="\e[4m"
-export PROMPT_STYLE="\e[0;49;92m"
-export ORANGE_STYLE="\e[0;40;93m"
 
 wait_for_user_confirmation() {
     OK=
@@ -44,6 +35,7 @@ prompt_menu_item() {
         echo -e "${ORANGE_STYLE} --> $1 ${RAZ_STYLE}"
     fi
 }
+
 exit_ok() {
     print "Bonne journée !"
     exit 0
