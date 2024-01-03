@@ -16,3 +16,15 @@ yes_or_repeat() {
         esac
     done
 }
+
+exit_if_error() {
+    CR=$?
+    echo -e "${RED_STYLE}Une erreur non gérée est survenue, arrêt du traitement${RAZ_STYLE}"
+    exit 1
+}
+
+move_to_local_folder() {
+    debug "move_to_local_folder $*"
+    cd ${LOCAL_REPO_PATH} || exit_if_error
+    cd ${LOCAL_FOLDER_NAME} || exit_if_error
+}
