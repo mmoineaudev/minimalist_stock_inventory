@@ -1,6 +1,6 @@
 add_entry_to_database_file() {
     debug "add_entry_to_database_file $*"
-    echo "$*" >>${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
+    echo "$*" >> ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
     sort_inventory
 }
 set_mesurement_unit() {
@@ -25,15 +25,22 @@ sort_inventory() {
     debug "sort_inventory $*"
     temp_file="fichier_temporaire_sans_entete.csv"
     # on copie tout sauf l'entete dans un fichier temporaire
-    cat ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} | tail -n +1 | sort >${temp_file}
-    debug "TEMP_FILE : $(cat ${temp_file})"
+    # cat ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} | tail -n +1 | sort > ${temp_file}
+    write_data_and_not_header_to_temp_file ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${temp_file}
     # on réécrit l'entete
-    echo "libellé_unique;unité;emplacement;quantité;affectation;date_update" >${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
-    cat ${temp_file} >>${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
-    rm ${temp_file}
+    echo "${HEADER_CSV}" > ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
+    cat ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${temp_file} >> ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
+    rm ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${temp_file}
     debug "Le fichier inventaire est trié"
 }
-
+write_data_and_not_header_to_temp_file() {
+    debug "write_data_and_not_header_to_temp_file $*"
+    target_file="$1"
+    number_of_lines=$(cat ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} | wc -l)
+    number_of_last_lines=$(( ${number_of_lines} - 1 ))
+    debug "number_of_lines=${number_of_lines} number_of_last_lines=${number_of_last_lines}"
+    cat ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} | tail -n ${number_of_last_lines} | sort  > ${target_file}
+}
 display_all_existing_labels() {
     debug "display_all_existing_labels $*"
 }

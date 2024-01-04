@@ -10,27 +10,27 @@ main_menu() {
     )
     select choice in ${MENU[@]}; do
         case $REPLY in
-        1)
+        1 | "Visualiser_état_courant_du_stock")
             synchronize
             display_inventory_sum_up
             break
             ;;
-        2)
+        2 | "Modifier_une_entrée")
             synchronize
             update_entry
             break
             ;;
-        3)
+        3 | "Ajouter_une_entrée")
             synchronize
             create_and_add_entry_to_database_file_and_then_push_it
             break
             ;;
-        4)
+        4 | "Rechercher_une_entrée")
             synchronize
             read_entry
             break
             ;;
-        5)
+        5 | "EXIT")
             exit_ok
             ;;
         *)
@@ -49,12 +49,14 @@ synchronize() {
     debug "synchronize $*"
     move_to_local_folder
     git fetch
-    git checkout origin/${default_main_branch} 2>/dev/nul
+    git checkout ${default_main_branch}
+    git branch --set-upstream-to=origin/${default_main_branch} ${default_main_branch}
+    git pull
 }
 
 create_and_add_entry_to_database_file_and_then_push_it() {
     debug "create_and_add_entry_to_database_file_and_then_push_it $*"
-    
+
     # saisie dirigée
     display_all_existing_labels
     print "Saisissez un libellé unique de la pièce : "
@@ -65,12 +67,13 @@ create_and_add_entry_to_database_file_and_then_push_it() {
     select unite in ${UNITS[*]}; do
         break
     done
+    print "Saisissez une quantité : "
+    read -p "--> " quantite
     print "Saisissez un emplacement : "
     select emplacement in ${EMPLACEMENTS[*]}; do
         break
     done
-    print "Saisissez une quantité : "
-    read -p "--> " quantite
+
     print "Saisissez une affectation (ou vide): "
     read -p "--> " affectation
     print_separator
@@ -83,7 +86,7 @@ create_and_add_entry_to_database_file_and_then_push_it() {
     # confirmation utilisateur
     yes_or_repeat "create_and_add_entry_to_database_file_and_then_push_it"
     # manip git pour le transactionnel
-    reference_date=$(date +"%Y_%m_%d_%H_%M")
+    reference_date=$(date +"%Y_%m_%d_%H_%M_%S")
     add_entry_to_database_file "${libelle_unique};${unite};${emplacement};${quantite};${affectation};${reference_date}"
     temp_branch_name="move_${reference_date}"
     commit_merge_and_delete ${temp_branch_name}

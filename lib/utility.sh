@@ -2,11 +2,11 @@
 yes_or_repeat() {
     # $* est la fonction passée en parametre et executee dans le cas "non"
     select yes_no in "oui" "non"; do
-        case $yes_no in
-            "oui")
+        case $REPLY in
+            1|"oui")
                 break
             ;;
-            "non")
+            2|"non")
                 $*
                 break
             ;;
