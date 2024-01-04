@@ -18,16 +18,16 @@ print() {
 }
 
 debug() {
-    if [[ ${DEBUG} == 1 ]]; then 
+    if [[ ${DEBUG} == 1 ]]; then
         echo -e "${RED_STYLE}[DEBUG] : $* ${RAZ_STYLE}"
     fi
 }
 
 # pour normaliser l'affichage menu, prends deux paramètres, le numéro de l'item, et le label
 prompt_menu_item() {
-    if [[ $2 ]]; then 
+    if [[ $2 ]]; then
         echo -e "${ORANGE_STYLE} $1 \t ${BLUE_STYLE} -->  $2 ${RAZ_STYLE}"
-    else 
+    else
         echo -e "${ORANGE_STYLE} --> $1 ${RAZ_STYLE}"
     fi
 }
@@ -49,5 +49,3 @@ title() {
 '
     echo -e ${RAZ_STYLE}
 }
-
-

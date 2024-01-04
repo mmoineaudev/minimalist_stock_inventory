@@ -18,7 +18,6 @@ yes_or_repeat() {
 }
 
 exit_if_error() {
-    CR=$?
     echo -e "${RED_STYLE}Une erreur non gérée est survenue, arrêt du traitement${RAZ_STYLE}"
     exit 1
 }

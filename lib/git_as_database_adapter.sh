@@ -1,4 +1,3 @@
-
 create_branch() {
     debug "create_branch $*"
     branch_name="$1"
@@ -19,7 +18,7 @@ commit_merge_and_delete() {
     commit_temporary_branch "${temp_branch_name}"
     debug "$(git log --graph)"
     git checkout origin/${default_main_branch}
-    git pull 
+    git pull
     git merge ${temp_branch_name} || exit_if_error
     git push -u origin ${default_main_branch} || exit_if_error
     debug "$(git log --graph)"
@@ -28,33 +27,32 @@ commit_merge_and_delete() {
 
 init_if_absent_repo() {
     debug "init_if_absent_repo $*"
-    
+
     if [[ -z ${REMOTE_URL} ]]; then
         print "Ce script a besoin des informations déclarées dans configuration.conf"
         print "Arrêt du traitement, merci de valoriser les properties git"
-        exit_ok
+        exit_if_error
     fi
-    
-    
-    if [[ ! -e ${DOT_GIT_PATH} ]]; then
+
+    if [[ -e ${DOT_GIT_PATH} ]]; then
+        debug "${DOT_GIT_PATH} existe"
+    else
         debug "${DOT_GIT_PATH} n'existe pas"
         mkdir -p ${LOCAL_REPO_PATH} && debug "${LOCAL_REPO_PATH} créé"
-        clone_and_check_if_csv_exists_and_create_it
-    else
-        debug "${DOT_GIT_PATH} existe"
-        check_if_csv_exists_and_create_it
+        clone_database_repo
     fi
-}
-clone_and_check_if_csv_exists_and_create_it() {
-    debug "clone_and_check_if_csv_exists $*"
-    cd ${LOCAL_REPO_PATH}
-    git clone ${REMOTE_URL} ${LOCAL_FOLDER_NAME} || exit_if_error
-    cd ${LOCAL_FOLDER_NAME}
     check_if_csv_exists_and_create_it
 }
 
+clone_database_repo() {
+    debug "clone_and_check_if_csv_exists $*"
+    cd ${LOCAL_REPO_PATH}
+    git clone ${REMOTE_URL} ${LOCAL_FOLDER_NAME} || exit_if_error
+    move_to_local_folder
+}
+
 check_if_csv_exists_and_create_it() {
-    debug "check_if_csv_exists_and_create_it $*" 
+    debug "check_if_csv_exists_and_create_it $*"
     if [[ -e ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} ]]; then
         debug "Le fichier ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} a été trouvé"
     else
@@ -66,7 +64,7 @@ check_if_csv_exists_and_create_it() {
 init_csv_file() {
     debug "init_csv_file $*"
     # On écrit l'entête
-    echo ${HEADER_CSV} > ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
+    echo ${HEADER_CSV} >${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
     # On cree la branche et on push
     move_to_local_folder
     git checkout -b ${default_main_branch}
