@@ -49,7 +49,7 @@ synchronize() {
     debug "synchronize $*"
     move_to_local_folder
     git fetch
-    git checkout -b origin/${default_main_branch}
+    git checkout origin/${default_main_branch} 2>/dev/nul
 }
 
 create_and_add_entry_to_database_file_and_then_push_it() {
