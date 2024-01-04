@@ -1,7 +1,3 @@
-#!/bin/bash
-
-
-
 wait_for_user_confirmation() {
     OK=
     read OK
