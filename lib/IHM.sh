@@ -94,6 +94,9 @@ create_and_add_entry_to_database_file_and_then_push_it() {
 
 read_entry() {
     debug "read_entry $*"
+    print "Saisissez les valeurs que vous souhaitez chercher, espacées par des espaces :"
+    read -r -p "# " patterns
+    search_for_entry ${patterns[@]}
 }
 
 update_entry() {

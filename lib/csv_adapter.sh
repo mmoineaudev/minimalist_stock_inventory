@@ -21,6 +21,38 @@ display_inventory_sum_up() {
         done
     } <${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
 }
+
+search_for_entry() {
+    debug "search_for_entry $* ($#)"
+    #shifting for avoiding caller script name 
+    pattern_to_be_searched=( $@ )
+
+    for (( pattern_index=1 ; pattern_index <= $# ; pattern_index++ )) ; do #pattern_index=1 because $!pattern_index 0 is the caller script
+        if [[ ${pattern_index} = 1 ]]; then
+            formatted_pattern_to_be_searched="${!pattern_index}" # gets the first element of the args array ! is the syntax for ${$index}
+        else 
+            formatted_pattern_to_be_searched="$formatted_pattern_to_be_searched|${!pattern_index}"
+        fi
+    done
+    
+    {
+        read # ignore la premiere ligne
+        line=0
+        while read line_from_db_file; do
+            line=$(($line + 1))
+            anything_found=
+            anything_found=` echo "${line_from_db_file}" | egrep -i ${formatted_pattern_to_be_searched} ` # | egrep '(${formatted_pattern_to_be_searched})'
+            if [[ -z ${anything_found}  ]]; then 
+                debug "Nothing found line ${line}"
+            else
+                print "Record found : ${ORANGE_STYLE}${line} ${PROMPT_STYLE}:${BLUE_STYLE} ${line_from_db_file}" 
+            fi
+            echo "finished line ${line}"
+        done
+    } <${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
+
+}
+
 sort_inventory() {
     debug "sort_inventory $*"
     temp_file="fichier_temporaire_sans_entete.csv"
