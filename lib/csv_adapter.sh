@@ -17,7 +17,7 @@ display_inventory_sum_up() {
     {
         read # ignore la premiere ligne
         while read -r line; do
-            echo "${line}"
+            display_record ${line}
         done
     } <${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
 }
@@ -45,9 +45,9 @@ search_for_entry() {
             if [[ -z ${anything_found}  ]]; then 
                 debug "Nothing found line ${line}"
             else
-                print "Record found : ${ORANGE_STYLE}${line} ${PROMPT_STYLE}:${BLUE_STYLE} ${line_from_db_file}" 
+                print "Record found : ${ORANGE_STYLE}ID = ${line}" # id is line number - 1
+                display_record ${line_from_db_file}
             fi
-            echo "finished line ${line}"
         done
     } <${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
 
@@ -73,6 +73,7 @@ write_data_and_not_header_to_temp_file() {
     debug "number_of_lines=${number_of_lines} number_of_last_lines=${number_of_last_lines}"
     cat ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} | tail -n ${number_of_last_lines} | sort  > ${target_file}
 }
+
 display_all_existing_labels() {
     debug "display_all_existing_labels $*"
 }

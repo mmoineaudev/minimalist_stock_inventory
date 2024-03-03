@@ -102,3 +102,16 @@ read_entry() {
 update_entry() {
     debug "update_entry $*"
 }
+
+display_record() {
+    value="$*"
+
+    libelle_unique=$( echo ${value} | cut -f1 -d ";" )
+    unite=$( echo ${value} | cut -f2 -d ";" )
+    emplacement=$( echo ${value} | cut -f3 -d ";" )
+    quantite=$( echo ${value} | cut -f4 -d ";" )
+    affectation=$( echo ${value} | cut -f5 -d ";" )
+    date_update=$( echo ${value} | cut -f6 -d ";" )
+
+    print "${libelle_unique} - ${quantite} ${unite}\n${emplacement} \t [${affectation} ${date_update} ]"
+}
