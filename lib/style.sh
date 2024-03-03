@@ -3,9 +3,12 @@ wait_for_user_confirmation() {
     read OK
 }
 print_separator() {
+    no_break_line=$1
     ## Affiche un séparateur
     echo -e "  ${UDERLINE_STYLE}                                                ${RAZ_STYLE}"
-    echo
+    if [[ -z $no_break_line ]]; then
+        echo
+    fi
 }
 print_title() {
     ## Affiche un titre, prends le titre en paramètre

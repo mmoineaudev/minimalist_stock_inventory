@@ -58,7 +58,7 @@ create_and_add_entry_to_database_file_and_then_push_it() {
     debug "create_and_add_entry_to_database_file_and_then_push_it $*"
 
     # saisie dirigée
-    display_all_existing_labels
+    display_inventory_sum_up LABELS_ONLY
     print "Saisissez un libellé unique de la pièce : "
     read -p "--> " libelle_unique
     libelle_unique=${libelle_unique^^}
@@ -101,17 +101,27 @@ read_entry() {
 
 update_entry() {
     debug "update_entry $*"
+    display_inventory_sum_up ONLY_LABELS
+    print "Saisissez l'ID de la ligne que vous souhaitez modifier :"
+    read -p " # " id
+    print ${id}
+    all_lines_temp_file=temp_all_lines_without_header.tmp
+    first_half=temp_first_half.tmp
+    second_half=temp_second_half.tmp
+    
+    write_data_and_not_header_to_temp_file ${all_lines_temp_file}
+
+    touch ${first_half}
+    touch ${second_half}
+    total_lines=$( cat ${all_lines_temp_file} | wc -l )
+    head_count=$(( $id-1 ))
+    tail_count=$(( $total_lines - $id ))
+    cat ${all_lines_temp_file} | head -n ${head_count} > ${first_half}
+    cat ${all_lines_temp_file} | tail -n ${tail_count} > ${second_half}
+
+    line_to_be_updated=$( cat ${all_lines_temp_file} | head -n $id | tail -n 1 )
+    display_record ${line_to_be_updated}
+    print "Saisissez les nouvelles vaeurs pour $(echo ${line_to_be_updated} | cut -f1 -d ";") :"
+    
 }
 
-display_record() {
-    value="$*"
-
-    libelle_unique=$( echo ${value} | cut -f1 -d ";" )
-    unite=$( echo ${value} | cut -f2 -d ";" )
-    emplacement=$( echo ${value} | cut -f3 -d ";" )
-    quantite=$( echo ${value} | cut -f4 -d ";" )
-    affectation=$( echo ${value} | cut -f5 -d ";" )
-    date_update=$( echo ${value} | cut -f6 -d ";" )
-
-    print "${libelle_unique} - ${quantite} ${unite}\n${emplacement} \t [${affectation} ${date_update} ]"
-}
