@@ -6,6 +6,7 @@ main_menu() {
         "Modifier_une_entrée"
         "Ajouter_une_entrée"
         "Rechercher_une_entrée"
+        "Supprimer_une_entrée"
         "EXIT"
     )
     select choice in ${MENU[@]}; do
@@ -30,7 +31,12 @@ main_menu() {
             read_entry
             break
             ;;
-        5 | "EXIT")
+        5 | "Supprimer_une_entrée")
+            synchronize
+            delete_entry
+            break
+            ;;
+        6 | "EXIT")
             exit_ok
             ;;
         *)
@@ -38,6 +44,7 @@ main_menu() {
             ;;
         esac
     done
+    clean
     main_menu
 }
 
@@ -106,22 +113,41 @@ update_entry() {
     read -p " # " id
     print ${id}
     all_lines_temp_file=temp_all_lines_without_header.tmp
-    first_half=temp_first_half.tmp
-    second_half=temp_second_half.tmp
     
     write_data_and_not_header_to_temp_file ${all_lines_temp_file}
 
-    touch ${first_half}
-    touch ${second_half}
     total_lines=$( cat ${all_lines_temp_file} | wc -l )
     head_count=$(( $id-1 ))
+    debug "head_count" ${head_count}
     tail_count=$(( $total_lines - $id ))
-    cat ${all_lines_temp_file} | head -n ${head_count} > ${first_half}
-    cat ${all_lines_temp_file} | tail -n ${tail_count} > ${second_half}
-
+    debug "tail_count" ${tail_count}
     line_to_be_updated=$( cat ${all_lines_temp_file} | head -n $id | tail -n 1 )
     display_record ${line_to_be_updated}
-    print "Saisissez les nouvelles vaeurs pour $(echo ${line_to_be_updated} | cut -f1 -d ";") :"
+    grep -v "${line_to_be_updated}" ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} > update.tmp
+    cat update.tmp > ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
+    print "Saisissez les nouvelles valeurs pour $(echo ${line_to_be_updated}) :"
+    create_and_add_entry_to_database_file_and_then_push_it
     
+}
+
+delete_entry() {
+    debug "delete_entry $*"
+    display_inventory_sum_up ONLY_LABELS
+    print "Saisissez l'ID de la ligne que vous souhaitez supprimer :"
+    read -p " # " id
+    print ${id}
+    all_lines_temp_file=temp_all_lines_without_header.tmp
+    
+    write_data_and_not_header_to_temp_file ${all_lines_temp_file}
+
+    total_lines=$( cat ${all_lines_temp_file} | wc -l )
+    head_count=$(( $id-1 ))
+    debug "head_count" ${head_count}
+    tail_count=$(( $total_lines - $id ))
+    debug "tail_count" ${tail_count}
+    line_to_be_deleted=$( cat ${all_lines_temp_file} | head -n $id | tail -n 1 )
+    display_record ${line_to_be_deleted}
+    grep -v "${line_to_be_deleted}" ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME} > delete.tmp
+    cat delete.tmp > ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
 }
 

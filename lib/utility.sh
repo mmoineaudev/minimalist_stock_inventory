@@ -27,3 +27,7 @@ move_to_local_folder() {
     cd ${LOCAL_REPO_PATH} || exit_if_error
     cd ${LOCAL_FOLDER_NAME} || exit_if_error
 }
+clean() {
+    move_to_local_folder
+    rm -f *.tmp
+}

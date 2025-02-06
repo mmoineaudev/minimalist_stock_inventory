@@ -9,11 +9,13 @@ commit_temporary_branch() {
     branch_name="$1"
     debug "git add ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}"
     git add ${LOCAL_REPO_PATH}/${LOCAL_FOLDER_NAME}/${DATABASE_FILE_NAME}
-    debug "git commit -m "Mouvement ${branch_name}""
-    git commit -m "Mouvement ${branch_name}"
+    debug "git commit -m \"Mouvement ${branch_name}\"  [$(git diff --staged)] "
+    
+    git commit -m "Mouvement ${branch_name} [$(git diff --staged)]"
     debug "git push --set-upstream origin ${branch_name}"
     git push --set-upstream origin ${branch_name}
 }
+
 
 commit_merge_and_delete() {
     debug "commit_merge_and_delete $*"
